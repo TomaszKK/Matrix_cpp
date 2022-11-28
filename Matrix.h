@@ -4,12 +4,13 @@ using namespace std;
 
 class rcMatrix{
 	private:
-		struct Matrix ;
+		struct Matrix;
 	public:
 		Matrix *mattab;
 		class Cref;
 		rcMatrix();
 		rcMatrix(const char*);
+		rcMatrix(int, int, double**);
 		rcMatrix(const rcMatrix&);
 		~rcMatrix();
 		rcMatrix& operator= (const rcMatrix&);
@@ -23,6 +24,8 @@ class rcMatrix{
 		friend ostream& operator << (ostream &, const rcMatrix &);
 		double read(int, int) const;
 		void write(int, int, double);
+		
+		// Pamietaj jeszcze o == i !=
 };
 
 class rcMatrix::Cref
@@ -41,20 +44,22 @@ class rcMatrix::Cref
 struct rcMatrix::Matrix{
 	int row;
 	int col;
-	double *data;
+	double **data;
 	int ref;
 
 	Matrix();
 	Matrix(int, int);
-	Matrix(int, int, double*);
+	Matrix(int, int, double**);
 	Matrix(const char* nameFile);
 	~Matrix();
 
 	double read(int, int) const;
-	void write(int, int, double);
+	void write(int, int, double );
 	
 	void add(const struct Matrix*);
 	void sub(const struct Matrix*);
   	void multiply(const struct Matrix*, const struct Matrix*);
 	Matrix* detach();
 };
+
+int findbiggervalue(int, int);

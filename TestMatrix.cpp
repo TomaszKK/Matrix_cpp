@@ -5,25 +5,56 @@ using namespace std;
 
 int main(){
 	try {
-		rcMatrix A("matrix.txt");
-		rcMatrix B("matrix2.txt");
-		rcMatrix C;
-		rcMatrix D("mat_3x3_1.txt");
-		rcMatrix E("mat_3x3_2.txt");
+		double** data1;
+		double** data2;
+
+		data1 = new double*[3];
+		data2 = new double*[3];
+
+		for(int i = 0; i < 3; i++){
+			data1[i] = new double[3];
+			data2[i] = new double[3];
+		}
+
+		for(int i = 0; i < 3; i++){
+			for(int j = 0; j < 3; j++){
+				data1[i][j] = i;
+				data2[i][j] = i+j;
+			}
+		}
+
+
+		
 		rcMatrix F;
-		cout << "--- Macierz 1 ---" << endl << endl << D << endl;
-		cout << "--- Macierz 2 ---" << endl << endl << E << endl;
+		rcMatrix G(3 ,3 , data2);
+		rcMatrix H("mat_3x3_1.txt");
+		
+		
+		cout << "--- Macierz 1 ---" << endl << endl << H << endl;
+		
+		cout << "--- Macierz 2 ---" << endl << endl << G << endl;
+		
 		cout << "--- + i - ---" << endl;
-		cout << (F = D + E) <<  endl;
-		cout << (F = E - D) <<  endl;
+		//cout << (F = G + H) <<  endl;
+
+		//cout << (F = G - H) <<  endl;
+		/*
 		cout << "--- += i -= ---" << endl;
-		cout << (D += E) << endl;
-		cout << (E -= D) << endl;
+		cout << (G += G) << endl;
+		cout << (H -= H) << endl;
+	*/
+		
 		cout << "--- *= i * ---" << endl;
-		cout << "--- Macierz 1 ---" << endl << endl << A << endl;
-		cout << "--- Macierz 2 ---" << endl << endl << B << endl;
-		cout << (C = B * A) <<  endl;
-		cout << (B *= A) << endl;
+		cout << (F = H * G) <<  endl;
+		//cout << (G *= G) << endl;
+
+		for(int i = 0; i < 3; i++){
+			delete[] data1[i];
+			delete[] data2[i];
+		}
+		delete[] data1;
+		delete[] data2;
+
 		} catch(exception& e) {
 		cout << "Wystapil blad - " << e.what() << endl;
 		} catch(...) {
