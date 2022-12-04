@@ -13,10 +13,14 @@ rcMatrix::rcMatrix(const char* nameFile){
     mattab = new Matrix(nameFile);
 }
 
+rcMatrix::rcMatrix(double num){
+    this->mattab = new Matrix(1,1);
+    this->mattab->data[0][0] = num;
+}
 
 rcMatrix::rcMatrix(const rcMatrix& m){
+    m.mattab->ref++;
     mattab = m.mattab;
-    mattab->ref++;
 }
 
 rcMatrix::~rcMatrix(){
@@ -30,11 +34,11 @@ rcMatrix::rcMatrix(int row, int col, double** data){
 }
 
 rcMatrix& rcMatrix::operator= (const rcMatrix& m){
-    m.mattab->ref++;
     if(--mattab->ref == 0){
         delete mattab;
     }
     mattab = m.mattab;
+    mattab->ref++;
     return *this;
 }
 
@@ -51,9 +55,9 @@ rcMatrix& rcMatrix::operator+= (const rcMatrix& m){
     return *this;
 }
 
-rcMatrix rcMatrix::operator+ (const rcMatrix& m) const{
-    rcMatrix temp(*this);
-    temp += m;
+rcMatrix operator+ (const rcMatrix& m1, const rcMatrix& m2){
+    rcMatrix temp(m1);
+    temp += m2;
     return temp;
 }
 
@@ -70,28 +74,52 @@ rcMatrix& rcMatrix::operator-= (const rcMatrix& m){
     return *this;
 }
 
-rcMatrix rcMatrix::operator- (const rcMatrix& m) const{
-    rcMatrix temp(*this);
-    temp -= m;
+rcMatrix operator- (const rcMatrix& m1, const rcMatrix& m2){
+    rcMatrix temp(m1);
+    temp -= m2;
     return temp;
 }
 
 rcMatrix& rcMatrix::operator*= (const rcMatrix& m){
-    if(mattab->row != m.mattab->row || mattab->col != m.mattab->col){
-        throw wrong_matrix_error();
-    }
     Matrix* new_matrix = new Matrix(mattab->row, m.mattab->col);
     new_matrix->multiply(mattab, m.mattab);
     if (--mattab->ref == 0){
 	    delete mattab;
+    }    
+    mattab = new_matrix;
+    
+    return *this;
+}
+
+rcMatrix operator* (const rcMatrix& m1, const rcMatrix& m2){
+    if(m1.mattab->row == 1 && m1.mattab->col == 1){
+        rcMatrix temp(m2);
+        temp *= m1.mattab->data[0][0];
+        return temp;
+    } else if(m2.mattab->row == 1 && m2.mattab->col == 1){
+        rcMatrix temp(m1);
+        temp *= m2.mattab->data[0][0];
+        return temp;
+    } else {
+        rcMatrix temp(m1);
+        temp *= m2;
+        return temp;
+    }
+    
+}
+
+rcMatrix& rcMatrix::operator*= (double num){
+    Matrix* new_matrix = new Matrix(mattab->row, mattab->col, mattab->data);
+    new_matrix->mulbynum(num);
+    if (--mattab->ref == 0){
+        delete mattab;
     }
     mattab = new_matrix;
     return *this;
 }
-
-rcMatrix rcMatrix::operator* (const rcMatrix& m) const{
-    rcMatrix temp(*this);
-    temp *= m;
+rcMatrix operator*(const rcMatrix &m, double num){
+    rcMatrix temp = m;
+    temp *= num;
     return temp;
 }
 
@@ -106,19 +134,37 @@ ostream& operator<< (ostream& out, const rcMatrix& m){
     return out;
 }
 
+bool operator== (const rcMatrix& m1, const rcMatrix& m2){
+    if(m1.mattab->row != m2.mattab->row || m1.mattab->col != m2.mattab->col){
+        return false;
+    }
+    for(int i = 0; i < m1.mattab->row; i++){
+        for(int j = 0; j < m1.mattab->col; j++){
+            if(m1.mattab->data[i][j] != m2.mattab->data[i][j]){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool operator!= (const rcMatrix& m1, const rcMatrix& m2){
+    return !(m1 == m2);
+}
+
 double rcMatrix::read(int i, int j) const{
-    return mattab->read(i, j);
+    if((0 > i || i >= mattab->row)||(0 > j || j>= mattab->col)){
+        throw out_of_index_error();
+    }
+        return mattab->data[i][j];
 }
 
 void rcMatrix::write(int i, int j, double d){
-    if(mattab->ref > 1){
-        mattab = mattab->detach();
+    if((0 > i || i >= mattab->row)||(0 > j || j>= mattab->col)){
+        throw out_of_index_error();
     }
-    mattab->write(i, j, d);
-}
-
-rcMatrix::Cref rcMatrix::operator() (int i, int j){
-    return Cref(*this, i, j);
+    mattab = mattab->detach();
+    mattab->data[i][j] = d;
 }
 
 
@@ -129,11 +175,7 @@ rcMatrix::Cref rcMatrix::operator() (int i, int j){
 
 
 
-int findbiggervalue(int num1, int num2){
-    if(num1 > num2){
-        return num1;
-    }
-    else{
-        return num2;
-    }
-}
+
+
+
+

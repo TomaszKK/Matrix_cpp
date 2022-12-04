@@ -12,6 +12,7 @@ rcMatrix::Matrix::Matrix(){
     ref = 1;
 }
 
+
 rcMatrix::Matrix::Matrix(int row, int col){
     this->row = row;
     this->col = col;
@@ -21,6 +22,7 @@ rcMatrix::Matrix::Matrix(int row, int col){
     }
     ref = 1;
 }
+
 
 rcMatrix::Matrix::Matrix(int row, int col, double** data){
     if (data!= NULL){
@@ -49,66 +51,76 @@ rcMatrix::Matrix::Matrix(const char* nameFile){
     {
       throw file_error();
     }
-    file >> row;
-    file >> col;
-    data = new double*[row];
-    for(int i=0;i<row;i++){
-        data[i] = new double[col];
-        for(int j=0;j<col;j++){
-            file >> data[i][j];
+    file >> this->row;
+    file >> this->col;
+    this->data = new double*[this->row];
+    for(int i = 0; i < this->row; i++){
+        this->data[i] = new double[col];
+        for(int j = 0; j < this->col; j++){
+            file >> this->data[i][j];
         }
     }
-    ref = 1;
+    //file.close();
+    this->ref = 1;
 }
 
 rcMatrix::Matrix::~Matrix(){
-    for(int i = 0; i < col; i++){
+    for(int i = 0; i < row; i++){
         delete[] data[i];
     }
     delete[] data;
 }
 
 void rcMatrix::Matrix::add(const struct Matrix* m){
-    for(int i = 0; i < row; i++){
-        for(int j = 0; j < col; j++){
-            data[i][j] += m->data[i][j];
-        }
-    }
-}
-
-void rcMatrix::Matrix::sub(const struct Matrix* m){
-    for(int i = 0; i < row; i++){
-        for(int j = 0; j < col; j++){
-            data[i][j] -= m->data[i][j];
-        }
-    }
-}
-
-
-void rcMatrix::Matrix::multiply(const struct Matrix* m1, const struct Matrix* m2){
-    if(m1->col == m2->row && m1->row == m2->col){
-        Matrix* temp = new Matrix(m1->row, m2->col);
-        for(int i = 0; i < m1->row; i++){
-            for(int j = 0; j < m2->col; j++){
-                double wynik = 0;
-                for(int k = 0;k<m1->col; k++){
-                    wynik += m1->data[i][k] * m2->data[k][j];
-                }
-                temp->data[i][j] = wynik;
-            }
-        }
+    if(col == m->col && row == m->row){
         for(int i = 0; i < row; i++){
-            data[i] = new double[col];
             for(int j = 0; j < col; j++){
-                data[i][j] = temp->data[i][j];
+                data[i][j] += m->data[i][j];
             }
         }
-        delete temp;
     }
     else{
         throw wrong_matrix_error();
     }
 }
+
+void rcMatrix::Matrix::sub(const struct Matrix* m){
+    if(col == m->col && row == m->row){
+        for(int i = 0; i < row; i++){
+            for(int j = 0; j < col; j++){
+                data[i][j] -= m->data[i][j];
+            }
+        }
+    }
+    else{
+        throw wrong_matrix_error();
+    }
+}
+
+void rcMatrix::Matrix::mulbynum(double num){
+    for(int i = 0; i < row; i++){
+        for(int j = 0; j < col; j++){
+            data[i][j] *= num;
+        }
+    }
+}
+
+void rcMatrix::Matrix::multiply(const struct Matrix* m1, const struct Matrix* m2){
+    if(m1->col == m2->row && m1->row == m2->col){
+        for(int i = 0; i < m1->row; i++){
+            for(int j = 0; j < m2->col; j++){
+                this->data[i][j] = 0;
+                for(int k = 0; k < m1->col; k++){
+                    this->data[i][j] += m1->data[i][k] * m2->data[k][j];
+                }
+            }
+        }
+    }
+    else{
+        throw wrong_matrix_error();
+    }
+}
+
 
 rcMatrix::Matrix* rcMatrix::Matrix::detach()
 {
@@ -116,18 +128,4 @@ rcMatrix::Matrix* rcMatrix::Matrix::detach()
         return this;
     ref--;
     return new Matrix(row, col, data);
-}
-
-double rcMatrix::Matrix::read(int i, int j) const{
-    if(i < 0 || i >= row || j < 0 || j >= col){
-        throw out_of_index_error();
-    }
-    return data[i][j];
-}
-
-void rcMatrix::Matrix::write(int i, int j, double d){
-    if(i < 0 || i >= row || j < 0 || j >= col){
-        throw out_of_index_error();
-    }
-    data[i][j] = d;
 }

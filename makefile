@@ -2,7 +2,7 @@
 headers = Matrix.h exception.h 
 
 # List your *.c files:
-sources = Matrix.cpp TestMatrix.cpp structMatrix.cpp 
+sources = Matrix.cpp TestMatrix.cpp structMatrix.cpp Cref.cpp 
 
 # Specify name of your program:
 executable = matrix
