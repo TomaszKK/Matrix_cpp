@@ -3,20 +3,20 @@
 
 using namespace std;
 
-void printTwoMatrix(const rcMatrix&, const rcMatrix&);
-void testAddandSub(const rcMatrix&, const rcMatrix&);
-void testMult(const rcMatrix&, const rcMatrix&);
-void testEquality(const rcMatrix&, const rcMatrix&);
-void testReadandWrite(const rcMatrix&);
-void testReferenceCounting(const rcMatrix&, const rcMatrix&);
-void testException(const rcMatrix&, const rcMatrix&, const rcMatrix&, const rcMatrix&);
+void printTwoMatrix(const Matrix&, const Matrix&);
+void testAddandSub(const Matrix&, const Matrix&);
+void testMult(const Matrix&, const Matrix&);
+void testEquality(const Matrix&, const Matrix&);
+void testReadandWrite(const Matrix&);
+void testReferenceCounting(const Matrix&, const Matrix&);
+void testException(const Matrix&, const Matrix&, const Matrix&, const Matrix&);
 
 int main(){
 	try {
-		rcMatrix A("mat_3x3_1.txt");
-		rcMatrix B("mat_3x3_2.txt");
-		rcMatrix mat_2x3("mat_2x3.txt");
-		rcMatrix mat_3x2("mat_3x2.txt");
+		Matrix A("mat_3x3_1.txt");
+		Matrix B("mat_3x3_2.txt");
+		Matrix mat_2x3("mat_2x3.txt");
+		Matrix mat_3x2("mat_3x2.txt");
 
 		testAddandSub(A, B);
 		testMult(mat_2x3, mat_3x2);
@@ -34,14 +34,14 @@ int main(){
 	return 0;
 }
 
-void printTwoMatrix(const rcMatrix& A, const rcMatrix& B){
+void printTwoMatrix(const Matrix& A, const Matrix& B){
 	cout << "--- Matrix A ---" << endl << endl << A << endl;
    	cout << "--- Matrix B ---" << endl << endl << B << endl;
 }
 
-void testAddandSub(const rcMatrix& A, const rcMatrix& B){
+void testAddandSub(const Matrix& A, const Matrix& B){
 	cout<<endl<<"--- Test Add and Sub ---"<<endl<<endl;
-	rcMatrix C;
+	Matrix C;
 	printTwoMatrix(A, B);
 	cout << "C = A + B" << endl<< (C = A + B) <<  endl;
 	cout << "C += A" << endl <<(C += A) << endl;
@@ -49,9 +49,9 @@ void testAddandSub(const rcMatrix& A, const rcMatrix& B){
 	cout<< "C -= A" << endl << (C -= A) << endl;
 }
 
-void testMult(const rcMatrix& A, const rcMatrix& B){
+void testMult(const Matrix& A, const Matrix& B){
 	cout<<endl<<"--- Test Multiplication ---"<<endl<<endl;
-	rcMatrix C;
+	Matrix C;
 	printTwoMatrix(A, B);
 	cout << "C = A * B" << endl << (C = A * B) << endl;
 	C = B;
@@ -61,16 +61,16 @@ void testMult(const rcMatrix& A, const rcMatrix& B){
 	cout << "C *= 2" << endl << (C *= 2) << endl;
 }
 
-void testEquality(const rcMatrix& A, const rcMatrix& B){
+void testEquality(const Matrix& A, const Matrix& B){
 	cout<<endl<<"--- Test Equality ---"<<endl<<endl;
 	printTwoMatrix(A, B);
 	cout << "A == B" << endl << (A == B) << endl;
 	cout << "A != B" << endl << (A != B) << endl;
 }
 
-void testReadandWrite(const rcMatrix& A){
+void testReadandWrite(const Matrix& A){
 	cout<<endl<<"--- Test Read and Write ---"<<endl<<endl;
-	rcMatrix C = A;
+	Matrix C = A;
 	cout<<"Matrix C"<<endl<<C<<endl;
 	cout<<"C(0,0) = "<<C(0,0)<<endl;
 	cout<<"C(0,1) = "<<C(0,1)<<endl;
@@ -81,24 +81,24 @@ void testReadandWrite(const rcMatrix& A){
 	cout<<endl<<"Matrix C after write"<<endl<<C<<endl;
 }
 
-void testReferenceCounting(const rcMatrix& A, const rcMatrix& B){
+void testReferenceCounting(const Matrix& A, const Matrix& B){
 	cout<<endl<<"--- Test Reference Counting ---"<<endl<<endl;
 	cout<<"Reference Count of A before creat C(A)= "<<(A.mattab->ref)<<endl;
 	cout<<"Copy A to C"<<endl;
-	rcMatrix C(A);
+	Matrix C(A);
 	cout<<"Reference Count of A = "<<(A.mattab->ref)<<endl;
 	cout<<"Reference Count of C = "<<(C.mattab->ref)<<endl;
 }
 
-void testException(const rcMatrix& A, const rcMatrix& B, const rcMatrix& C, const rcMatrix& D){
+void testException(const Matrix& A, const Matrix& B, const Matrix& C, const Matrix& D){
 	cout<<endl<<"--- Test Exception ---"<<endl<<endl;
 	cout<<"Matrix A"<<endl<<A<<endl;
 	cout<<"Matrix B"<<endl<<B<<endl;
 	cout<<"Matrix C"<<endl<<C<<endl;
 	cout<<"Matrix D"<<endl<<D<<endl;
-	rcMatrix E("mat_3x3_1.txt");
+	Matrix E("mat_3x3_1.txt");
 	cout<<(E = A + C)<<endl;
-	//rcMatrix F("mat.txt");
+	//Matrix F("mat.txt");
 	//cout<<E(5,5)<<endl;
 }
 	

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-rcMatrix::Matrix::Matrix(){
+Matrix::MatrixData::MatrixData(){
     row = 0;
     col = 0;
     data = NULL;
@@ -13,7 +13,7 @@ rcMatrix::Matrix::Matrix(){
 }
 
 
-rcMatrix::Matrix::Matrix(int row, int col){
+Matrix::MatrixData::MatrixData(int row, int col){
     this->row = row;
     this->col = col;
     data = new double*[row];
@@ -24,7 +24,7 @@ rcMatrix::Matrix::Matrix(int row, int col){
 }
 
 
-rcMatrix::Matrix::Matrix(int row, int col, double** data){
+Matrix::MatrixData::MatrixData(int row, int col, double** data){
     if (data!= NULL){
         this->row = row;
         this->col = col;
@@ -44,7 +44,7 @@ rcMatrix::Matrix::Matrix(int row, int col, double** data){
     ref = 1;
 }
 
-rcMatrix::Matrix::Matrix(const char* nameFile){
+Matrix::MatrixData::MatrixData(const char* nameFile){
     fstream file;
     file.open(nameFile, ios::in);
     if(file.good() == 0)
@@ -64,14 +64,14 @@ rcMatrix::Matrix::Matrix(const char* nameFile){
     this->ref = 1;
 }
 
-rcMatrix::Matrix::~Matrix(){
+Matrix::MatrixData::~MatrixData(){
     for(int i = 0; i < row; i++){
         delete[] data[i];
     }
     delete[] data;
 }
 
-void rcMatrix::Matrix::add(const struct Matrix* m){
+void Matrix::MatrixData::add(const struct MatrixData* m){
     if(col == m->col && row == m->row){
         for(int i = 0; i < row; i++){
             for(int j = 0; j < col; j++){
@@ -84,7 +84,7 @@ void rcMatrix::Matrix::add(const struct Matrix* m){
     }
 }
 
-void rcMatrix::Matrix::sub(const struct Matrix* m){
+void Matrix::MatrixData::sub(const struct MatrixData* m){
     if(col == m->col && row == m->row){
         for(int i = 0; i < row; i++){
             for(int j = 0; j < col; j++){
@@ -97,7 +97,7 @@ void rcMatrix::Matrix::sub(const struct Matrix* m){
     }
 }
 
-void rcMatrix::Matrix::mulbynum(double num){
+void Matrix::MatrixData::mulbynum(double num){
     for(int i = 0; i < row; i++){
         for(int j = 0; j < col; j++){
             data[i][j] *= num;
@@ -105,7 +105,7 @@ void rcMatrix::Matrix::mulbynum(double num){
     }
 }
 
-void rcMatrix::Matrix::multiply(const struct Matrix* m1, const struct Matrix* m2){
+void Matrix::MatrixData::multiply(const struct MatrixData* m1, const struct MatrixData* m2){
     if(m1->col == m2->row && m1->row == m2->col){
         for(int i = 0; i < m1->row; i++){
             for(int j = 0; j < m2->col; j++){
@@ -122,10 +122,10 @@ void rcMatrix::Matrix::multiply(const struct Matrix* m1, const struct Matrix* m2
 }
 
 
-rcMatrix::Matrix* rcMatrix::Matrix::detach()
+Matrix::MatrixData* Matrix::MatrixData::detach()
 {
     if (ref == 1)
         return this;
     ref--;
-    return new Matrix(row, col, data);
+    return new MatrixData(row, col, data);
 }
