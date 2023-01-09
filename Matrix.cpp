@@ -49,10 +49,11 @@ Matrix& Matrix::operator=(const Matrix& m)
 }
 
 Matrix& Matrix::operator+=(const Matrix& m)
-{
+{   
     if (mattab->row != m.mattab->row || mattab->col != m.mattab->col) {
         throw wrong_matrix_error();
     }
+    mattab = mattab->detach();
     mattab->add(m.mattab);
     return *this;
 }
@@ -69,6 +70,7 @@ Matrix& Matrix::operator-=(const Matrix& m)
     if (mattab->row != m.mattab->row || mattab->col != m.mattab->col) {
         throw wrong_matrix_error();
     }
+    mattab = mattab->detach();
     mattab->sub(m.mattab);
     return *this;
 }
@@ -82,6 +84,7 @@ Matrix operator-(const Matrix& m1, const Matrix& m2)
 
 Matrix& Matrix::operator*=(const Matrix& m)
 {
+    mattab = mattab->detach();
     MatrixData* new_matrix = new MatrixData(mattab->row, m.mattab->col);
     new_matrix->multiply(mattab, m.mattab);
     if (--mattab->ref == 0) {
@@ -178,6 +181,7 @@ void Matrix::write(int i, int j, double d)
     mattab->data[i][j] = d;
 }
 
-int Matrix::getrefcount(){
+int Matrix::getrefcount()
+{
     return mattab->ref;
 }

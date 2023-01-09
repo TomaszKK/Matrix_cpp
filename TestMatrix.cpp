@@ -53,7 +53,7 @@ void testAddandSub(const Matrix& A, const Matrix& B)
     cout << "C = A + B" << endl << (C = A + B) << endl;
     cout << "C += A" << endl << (C += A) << endl;
     cout << "C = A - B" << endl << (C = A - B) << endl;
-    cout << "C matrix"<<endl << C << endl << "A matrix" << endl << A;
+    cout << "C matrix" << endl << C << endl << "A matrix" << endl << A;
     cout << "C -= A" << endl << (C -= A) << endl;
 }
 
